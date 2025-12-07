@@ -56,10 +56,10 @@ export class EnrichPage extends BasePage {
 
   /**
    * Wait for search API response and validate results
-   * @param {string} expectedCustomerName - Expected master customer name in results
+   * @param {string} _expectedCustomerName - Expected master customer name in results (used for documentation)
    * @returns {Promise<Object>} The response body
    */
-  async searchAndWaitForResults(expectedCustomerName) {
+  async searchAndWaitForResults(_expectedCustomerName) {
     const [response] = await Promise.all([
       this.page.waitForResponse(
         (res) =>
