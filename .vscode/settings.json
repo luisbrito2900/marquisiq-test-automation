@@ -1,0 +1,7 @@
+{
+  "terminal.integrated.env.osx": {
+    "PATH": "/opt/homebrew/opt/node@20/bin:${env:PATH}"
+  },
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "npm.packageManager": "npm"
+}
