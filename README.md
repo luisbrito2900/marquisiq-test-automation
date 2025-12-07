@@ -22,7 +22,7 @@ Before running the tests, make sure you have installed:
 
    ```bash
    git clone <repository-url>
-   cd poc-marquisIQ-playwright
+   cd marquisiq-test-automation
    ```
 
 2. Install dependencies:
