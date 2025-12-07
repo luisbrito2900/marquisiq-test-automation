@@ -53,6 +53,14 @@ npm test
 npm run test:headed
 ```
 
+### Code Quality:
+
+```bash
+npm run lint          # Check code quality
+npm run lint:fix      # Auto-fix linting issues
+npm run lint:check    # Strict check (no warnings)
+```
+
 ### View reports:
 
 **Mochawesome Report:**
@@ -73,6 +81,9 @@ npx playwright show-report
 
 ```
 poc-marquisIQ-playwright/
+├── .github/               # GitHub Actions workflows
+│   └── workflows/
+│       └── ci.yml        # CI/CD pipeline
 ├── pages/                 # Page Object Models (POM)
 │   ├── BasePage.js        # Base class with common methods
 │   ├── LoginPage.js       # Login page
@@ -85,6 +96,7 @@ poc-marquisIQ-playwright/
 │   └── screenshotHelper.js
 ├── .env                   # Environment variables (do not commit to Git)
 ├── .env.example          # Environment variables template
+├── eslint.config.js       # ESLint configuration
 ├── playwright.config.js   # Playwright configuration
 └── package.json
 ```
@@ -121,8 +133,10 @@ The project generates two types of reports:
 
 - **Playwright**: Test automation framework
 - **pwmochawesome**: Reporter to generate Mochawesome-style reports
+- **ESLint**: Code quality and linting
 - **dotenv**: Environment variables management
 - **Node.js 20+**: JavaScript runtime
+- **GitHub Actions**: CI/CD pipeline
 
 ## 📝 Notes
 
@@ -134,8 +148,11 @@ The project generates two types of reports:
 
 1. Create a branch for your feature
 2. Make the necessary changes
-3. Ensure tests pass: `npm test`
-4. Create a Pull Request
+3. Run linting: `npm run lint:check`
+4. Ensure tests pass: `npm test`
+5. Create a Pull Request
+
+**Note:** All Pull Requests will automatically run the CI pipeline which includes linting and test execution.
 
 ## 📄 License
 
