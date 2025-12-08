@@ -30,7 +30,7 @@ test.describe('Search Filter Tests', () => {
     );
     await enrichPage.takeScreenshot('Search Results Displayed');
   });
-  test('Search Filtering by Assigned Data Range', async ({ page }) => {
+  test('Search Filtering by Assigned Date Range', async ({ page }) => {
     const loginPage = new LoginPage(page);
     const homePage = new HomePage(page);
     const enrichPage = new EnrichPage(page);
