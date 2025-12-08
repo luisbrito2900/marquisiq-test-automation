@@ -42,15 +42,9 @@ export class BasePage {
     return await this.page.waitForResponse(predicate);
   }
 
-  /**
-   * Wait for API success response
-   * @param {string} partialUrl - Partial URL to match
-   * @returns {Promise<import('@playwright/test').Response>}
-   */
   async waitForApiSuccess(partialUrl) {
     return await this.waitForResponse(
       (response) => response.url().includes(partialUrl) && response.ok()
     );
   }
 }
-

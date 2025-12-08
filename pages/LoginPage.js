@@ -89,35 +89,33 @@ export class LoginPage extends BasePage {
   async login(username, password, baseUrl = 'https://sandbox.marquisiq.com/') {
     await this.navigateToLogin(baseUrl);
     await this.clickSignIn();
-    
-    // First login attempt
+
     await this.fillUsername(username);
     await this.clickSubmit();
     await this.fillPassword(password);
     await this.clickSubmit();
-    
-    // Wait for cancel link and click it
+
+    const el = this.page.locator('#cancelLink');
+    try {
+      await el.waitFor({ state: 'visible', timeout: 5000 });
+    } catch {
+      await this.clickSubmit();
+    }
     await this.page.waitForTimeout(2000);
     await this.clickCancel();
 
-    // Click "Other" tile
     await this.clickOtherTile();
 
-    // Second login attempt
     await this.fillUsername(username);
     await this.clickSubmit();
     await this.fillPassword(password);
     await this.clickSubmit();
 
-    // Additional password submission (if required by the flow)
     await this.fillPassword(password);
     await this.clickSubmit();
 
-    // Click back button
     await this.clickBack();
 
-    // Wait for navigation to complete
     await this.page.waitForTimeout(5000);
   }
 }
-
