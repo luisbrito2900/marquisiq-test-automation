@@ -1,0 +1,41 @@
+[dotenv@17.2.3] injecting env (1) from .env -- tip: ⚙️  override existing env vars with { override: true }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+
+Running 1 test using 1 worker
+
+[dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  override existing env vars with { override: true }
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+
+=== AFTER LOGIN ===
+URL: https://login.microsoftonline.com/5678a3b1-4ddb-4694-8ead-ebf9e4424d98/reprocess?prompt=select_account&sosid=00b96cd9-1ba1-5176-2709-5c771616cd81&ctx=rQQIARAAfVI7bNNgELbrNLSR6Aup6gAoQhFCFDu_X0kcqRIpTVMnTdJH0jyW6rf9u7bxK7ajNl0YkICtHRHdytaFChbUATHAQKeOCCGBYEFdQExdkHDVlpHT6bvT3Umn776LRVmKyVD0bYKhQDaBOJkR0gJLpgVaITlFSpECDDOWp1WJDZsyw3tjsRE9sYPnxwYfvBl__OXzhxLcw69rQeD62WTSh7YiORuUBb1OV_f1DiU7VvI1jh_h-A8c3-tLAFqQGC4lkHSIZBoCloQpEC5BAgvTisxyDPepb7ia6wYacwqOp2-i330DqgfXLGQHzwgX9Ypu-56YEo3cRrUh9iozLX6-lg9jPahsrvHlHuBaRh3M18Re25o1ykZRqzRa65Vl0Rct2lQKeb1q-zps8KDdLGotdsmVGL6OmtOmaDi6bK3ch82i2WIXdbUJpvaIBDgzljzFM5Avsgt7SST4VDoDWYkOr6dIZEiTIzMIKiSSVAFxITVFyBwS1bqPPGopbMQdF9m6Enc9R9VNFHdU1dRttAplGfl-vOA5XbeMLOl8nMqZZnxG95AcOF7vX-kjgX8jbgTID3R7jYTdwLFgoDv23XMZFBjAUyH2I_hRBD-OjA8QI1cn8Dh26yYgsgMDsRFsAotjJxF8tz_U98XQ0NbB97Hp3ZX3r0o7BHbYn1SqzcWZxfTy9PL0pANUOlcuL8AC6DTyqeqCxtbUJa_SqjO1upmfYrP0dhTfjl45jA5bPjQpw6ckz1kPOf-K9j25hB0MXvvvvzyN4XuxyYJNavOG2HU2eY3LVdVyk2_bpO3kNduAYLa44q6yXYDmgb6-H8PfXsZOhv48P3r47tHWz7nj4Tu6NkN3RLW9JvLJYrmU1FY2ClKD3agAs1JrQ3EOuIZrl5ZK_uLU_gj2NfRR7GQ0_hc1
+Available tabs: []
+
+=== ENRICH TAB ===
+  ✘  1 [chromium] › tests/dom-exploration.spec.js:9:8 › Smoke Tests › Capture DOM state at each navigation point (30.0s)
+
+
+  1) [chromium] › tests/dom-exploration.spec.js:9:8 › Smoke Tests › Capture DOM state at each navigation point 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('//button[contains(text(), \'Enrich\')]')[22m
+
+
+       at ../pages/HomePage.js:24
+
+      22 |   }
+      23 |   async navigateToEnrichTab() {
+    > 24 |     await this.page.locator(this.selectors.enrichTab).click();
+         |                                                       ^
+      25 |   }
+      26 |   async waitForEnrichApiLoad() {
+      27 |     await this.waitForApiSuccess('/generic/api/generic');
+        at HomePage.navigateToEnrichTab (/Users/luisbrito/projects/poc-marquisIQ-playwright/pages/HomePage.js:24:55)
+        at /Users/luisbrito/projects/poc-marquisIQ-playwright/tests/dom-exploration.spec.js:29:20
+
+    Error Context: test-results/dom-exploration-Smoke-Test-c80a0-te-at-each-navigation-point-chromium/error-context.md
+
+  1 failed
+    [chromium] › tests/dom-exploration.spec.js:9:8 › Smoke Tests › Capture DOM state at each navigation point 

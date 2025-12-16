@@ -1,4 +1,5 @@
 import { BasePage } from './BasePage';
+import { expect } from '@playwright/test';
 export class EnrichPage extends BasePage {
   constructor(page) {
     super(page);
@@ -17,6 +18,7 @@ export class EnrichPage extends BasePage {
       lastField: "//span[normalize-space()='Last']/following::input[1]",
       nextField: "//span[normalize-space()='Next']/following::input[1]",
       applyBtn: "//button[.='Apply']",
+      dropDownOption: `input+[data-testid="ArrowDropDownIcon"]`,
     };
     this.apiEndpoints = {
       genericApi: '/generic/api/generic',
@@ -46,19 +48,19 @@ export class EnrichPage extends BasePage {
       .click();
   }
 
-  async searchAndWaitForResults(_expectedCustomerName) {
+  async searchAndWaitForResults(_customerName) {
     const [response] = await Promise.all([
-      this.page.waitForResponse(
-        (res) =>
+      this.page.waitForResponse((res) => {
+        return (
           res.url().includes(this.apiEndpoints.genericApi) &&
           res.url().includes(this.apiEndpoints.customerWithMaster) &&
           res.ok()
-      ),
+        );
+      }),
       this.clickSearch(),
     ]);
 
-    const body = await response.json();
-    return body;
+    return await response.json();
   }
 
   validateMasterCustomerFilter(responseBody, expectedCustomerName, expect) {
@@ -78,7 +80,7 @@ export class EnrichPage extends BasePage {
     this.validateMasterCustomerFilter(responseBody, customerName, expect);
   }
 
-  async clickOnDataRangeButton() {
+  async clickOnDateRangeButton() {
     await this.page.locator(this.selectors.dataRangeBtn).click();
   }
 
@@ -152,5 +154,89 @@ export class EnrichPage extends BasePage {
   async filterByAssignedDateRange(startYear, endYear, expect) {
     const responseBody = await this.applyDateRangeAndWaitForResults();
     this.validateAssignedDateRange(responseBody, startYear, endYear, expect);
+  }
+
+  async selectOption() {
+    await this.page.getByText('Assign', { exact: true }).click();
+    await this.page.getByText('Maintain').click();
+    await this.waitForApiSuccess(this.apiEndpoints.genericApi);
+    await this.page.getByText('Maintain', { exact: true }).click();
+    // await this.waitForApiSuccess(this.apiEndpoints.genericApi); // CHECK AGAIN
+    await this.page.getByText('Configure').click();
+    await expect(
+      this.page.getByRole('button', { name: 'Delete' }).nth(0)
+    ).toBeVisible();
+  }
+  async openMasterCustomerCriteriaDropdown(customerName) {
+    const chip = this.page
+      .locator('span')
+      .filter({ hasText: customerName })
+      .first();
+    await chip.click();
+  }
+  async selectMasterCustomerCriteria(criteriaLabel) {
+    await this.page.getByRole('menuitem', { name: criteriaLabel }).click();
+  }
+  async setMasterCustomerCriteria(customerName, criteriaLabel) {
+    await this.openMasterCustomerCriteriaDropdown(customerName);
+    await this.selectMasterCustomerCriteria(criteriaLabel);
+  }
+  getMasterCustomerQueryKey(criteriaLabel) {
+    const map = {
+      'Include Exact': 'MasterCustomerName_exact[]',
+      'Include Contains': 'MasterCustomerName_contains[]',
+      'Exclude Contains': 'MasterCustomerName_exclude[]',
+      'Exclude Exact': 'MasterCustomerName_excludeExact[]',
+    };
+
+    const key = map[criteriaLabel];
+    if (!key) throw new Error(`Unknown criteriaLabel: ${criteriaLabel}`);
+    return key;
+  }
+  async setMasterCustomerCriteriaAndWaitForResults(
+    customerName,
+    criteriaLabel
+  ) {
+    const queryKey = this.getMasterCustomerQueryKey(criteriaLabel);
+
+    const [response] = await Promise.all([
+      this.page.waitForResponse((res) => {
+        if (!res.url().includes(this.apiEndpoints.genericApi)) return false;
+        if (!res.url().includes(this.apiEndpoints.customerWithMaster))
+          return false;
+        if (!res.ok()) return false;
+
+        const url = new URL(res.url());
+        const value = url.searchParams.get(queryKey);
+
+        // ✅ asegura que sea el request del criterio actual
+        return value === customerName;
+      }),
+      this.setMasterCustomerCriteria(customerName, criteriaLabel), // esto abre el dropdown y hace click en el criterio
+    ]);
+
+    return await response.json();
+  }
+
+  async validateExcludeContains(responseBody, excludedName, expect) {
+    await expect(Array.isArray(responseBody.results)).toBeTruthy();
+
+    for (const item of responseBody.results) {
+      await expect(item.MasterCustomerName).not.toContain(excludedName);
+    }
+  }
+  async validateIncludeContains(responseBody, expectedName, expect) {
+    await expect(Array.isArray(responseBody.results)).toBeTruthy();
+
+    for (const item of responseBody.results) {
+      await expect(item.MasterCustomerName).toContain(expectedName);
+    }
+  }
+  async validateExcludeExact(responseBody, excludedName, expect) {
+    await expect(Array.isArray(responseBody.results)).toBeTruthy();
+
+    for (const item of responseBody.results) {
+      await expect(item.MasterCustomerName).not.toBe(excludedName);
+    }
   }
 }

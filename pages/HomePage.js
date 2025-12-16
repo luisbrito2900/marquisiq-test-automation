@@ -1,45 +1,42 @@
 import { BasePage } from './BasePage';
+import { FilesTab } from './FilesTab';
 
-/**
- * Page Object Model for Home Page
- */
 export class HomePage extends BasePage {
   constructor(page) {
     super(page);
     this.selectors = {
       welcomeMessage: 'text=What do you want to know?',
-      enrichTab: '[role="tablist"] > button',
+      enrichTab: "//button[contains(text(), 'Enrich')]",
+      exploreTab: "//button[contains(text(), 'Explore')]",
+      analyzeTab: "//button[contains(text(), 'Analyze')]",
+      filesTab: "//button[contains(text(), 'Files')]",
     };
   }
-
-  /**
-   * Verify that the home page is loaded
-   * @returns {Promise<import('@playwright/test').Locator>}
-   */
   getWelcomeMessage() {
     return this.page.getByText('What do you want to know?');
   }
-
-  /**
-   * Verify welcome message is visible
-   */
   async verifyWelcomeMessageVisible() {
-    await this.page.getByText('What do you want to know?').waitFor({ state: 'visible' });
+    await this.page
+      .getByText('What do you want to know?')
+      .waitFor({ state: 'visible' });
   }
-
-  /**
-   * Navigate to Enrich tab
-   * @param {number} tabIndex - Index of the tab (default: 1 for Enrich)
-   */
-  async navigateToEnrichTab(tabIndex = 1) {
-    await this.page.locator(this.selectors.enrichTab).nth(tabIndex).click();
+  async navigateToEnrichTab() {
+    await this.page.locator(this.selectors.enrichTab).click();
   }
-
-  /**
-   * Wait for Enrich API to load successfully
-   */
   async waitForEnrichApiLoad() {
     await this.waitForApiSuccess('/generic/api/generic');
   }
-}
+  async clickOnExploreTab() {
+    await this.page.locator(this.selectors.exploreTab).click();
+    await this.waitForApiSuccess('/generic/api/generic');
+  }
+  async clickOnAnalyzeTab() {
+    await this.page.locator(this.selectors.analyzeTab).click();
+  }
+  async clickOnFilesTab() {
+    const filesPages = new FilesTab(this.page);
 
+    await this.page.locator(this.selectors.filesTab).click();
+    await filesPages.verifyFilesTabOpenSuccessfully();
+  }
+}

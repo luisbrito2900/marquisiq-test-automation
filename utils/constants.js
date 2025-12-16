@@ -3,10 +3,6 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
-/**
- * Application constants and configuration
- * Values are loaded from environment variables with fallback defaults
- */
 export const APP_CONFIG = {
   BASE_URL: process.env.BASE_URL || 'https://sandbox.marquisiq.com/',
   API_ENDPOINTS: {
@@ -20,7 +16,8 @@ export const TEST_DATA = {
     USERNAME: process.env.USERNAME || '',
     PASSWORD: process.env.PASSWORD || '',
   },
-  MASTER_CUSTOMER_NAME: process.env.MASTER_CUSTOMER_NAME || 'The Walt Disney Company',
+  MASTER_CUSTOMER_NAME:
+    process.env.MASTER_CUSTOMER_NAME || 'The Walt Disney Company',
 };
 
 export const TIMEOUTS = {
@@ -28,4 +25,3 @@ export const TIMEOUTS = {
   MEDIUM: 3000,
   LONG: 5000,
 };
-

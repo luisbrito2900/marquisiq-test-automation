@@ -1,8 +1,4 @@
 import { BasePage } from './BasePage';
-
-/**
- * Page Object Model for Login functionality
- */
 export class LoginPage extends BasePage {
   constructor(page) {
     super(page);
@@ -16,76 +12,34 @@ export class LoginPage extends BasePage {
       backButton: '#idBtn_Back',
     };
   }
-
-  /**
-   * Navigate to the application login page
-   * @param {string} baseUrl - Base URL of the application
-   */
   async navigateToLogin(baseUrl) {
     await this.goto(baseUrl);
   }
-
-  /**
-   * Click on the Sign In button
-   */
   async clickSignIn() {
     await this.page.getByText('Sign In').first().click();
   }
-
-  /**
-   * Fill username in the login form
-   * @param {string} username - Username to enter
-   */
   async fillUsername(username) {
     await this.page.locator(this.selectors.usernameInput).fill(username);
   }
-
-  /**
-   * Fill password in the login form
-   * @param {string} password - Password to enter
-   */
   async fillPassword(password) {
     await this.page.locator(this.selectors.passwordInput).waitFor();
     await this.page.locator(this.selectors.passwordInput).fill(password);
   }
-
-  /**
-   * Click the submit button
-   */
   async clickSubmit() {
     await this.page.locator(this.selectors.submitButton).click();
   }
-
-  /**
-   * Click the cancel link
-   */
   async clickCancel() {
     await this.page.locator(this.selectors.cancelLink).waitFor();
     await this.page.locator(this.selectors.cancelLink).click();
   }
-
-  /**
-   * Click the "Other" tile option
-   */
   async clickOtherTile() {
     await this.page.locator(this.selectors.otherTile).waitFor();
     await this.page.locator(this.selectors.otherTile).click();
   }
-
-  /**
-   * Click the back button
-   */
   async clickBack() {
     await this.page.locator(this.selectors.backButton).waitFor();
     await this.page.locator(this.selectors.backButton).click();
   }
-
-  /**
-   * Complete the full login flow
-   * @param {string} username - Username to login
-   * @param {string} password - Password to login
-   * @param {string} baseUrl - Base URL of the application
-   */
   async login(username, password, baseUrl = 'https://sandbox.marquisiq.com/') {
     await this.navigateToLogin(baseUrl);
     await this.clickSignIn();
