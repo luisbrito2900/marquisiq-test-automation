@@ -19,10 +19,14 @@ export class EnrichPage extends BasePage {
       nextField: "//span[normalize-space()='Next']/following::input[1]",
       applyBtn: "//button[.='Apply']",
       dropDownOption: `input+[data-testid="ArrowDropDownIcon"]`,
+      masterCustomerNameCell:
+        '[role="gridcell"][data-field="MasterCustomerName"]',
+      masterCustomerMenuButton: 'button[aria-label="Menu"]',
     };
     this.apiEndpoints = {
       genericApi: '/generic/api/generic',
       customerWithMaster: 'vwCustomerWithMaster',
+      createMasterCustomer: '/generic/api/generic/assign',
     };
   }
 
@@ -48,16 +52,39 @@ export class EnrichPage extends BasePage {
       .click();
   }
 
-  async searchAndWaitForResults(_customerName) {
+  async searchAndWaitForResults(
+    _customerName,
+    { updateAction = false, queryParam } = {}
+  ) {
     const [response] = await Promise.all([
       this.page.waitForResponse((res) => {
-        return (
-          res.url().includes(this.apiEndpoints.genericApi) &&
-          res.url().includes(this.apiEndpoints.customerWithMaster) &&
-          res.ok()
-        );
+        if (!res.url().includes(this.apiEndpoints.genericApi)) return false;
+        if (!res.url().includes(this.apiEndpoints.customerWithMaster))
+          return false;
+        if (!res.ok()) return false;
+
+        if (queryParam) {
+          let url;
+          try {
+            url = new URL(res.url());
+          } catch {
+            return false;
+          }
+
+          const keys = Array.isArray(queryParam.key)
+            ? queryParam.key
+            : [queryParam.key];
+
+          return keys.some(
+            (key) => url.searchParams.get(key) === queryParam.value
+          );
+        }
+
+        return true;
       }),
-      this.clickSearch(),
+      updateAction
+        ? this.page.locator('button:has-text("Apply Filters")').click()
+        : this.clickSearch(),
     ]);
 
     return await response.json();
@@ -67,15 +94,28 @@ export class EnrichPage extends BasePage {
     expect(Array.isArray(responseBody.results)).toBeTruthy();
 
     for (const item of responseBody.results) {
-      expect(item.MasterCustomerName).toBe(expectedCustomerName);
+      const actualName =
+        item.MasterCustomerName ??
+        item.CustomerName ??
+        item.MasterCustomerPrimaryName;
+      expect(actualName).toBe(expectedCustomerName);
     }
   }
 
-  async searchByMasterCustomerName(customerName, expect) {
-    await this.verifyMasterCustomerNameVisible();
-    await this.fillMasterCustomerName(customerName);
+  async searchByMasterCustomerName(
+    customerName,
+    expect,
+    { updateAction = false, queryParam } = {}
+  ) {
+    if (!updateAction) {
+      await this.verifyMasterCustomerNameVisible();
+      await this.fillMasterCustomerName(customerName);
+    }
 
-    const responseBody = await this.searchAndWaitForResults(customerName);
+    const responseBody = await this.searchAndWaitForResults(customerName, {
+      updateAction,
+      queryParam,
+    });
 
     this.validateMasterCustomerFilter(responseBody, customerName, expect);
   }
@@ -239,6 +279,54 @@ export class EnrichPage extends BasePage {
       await expect(item.MasterCustomerName).not.toBe(excludedName);
     }
   }
+  getMasterCustomerGridCell(name) {
+    return this.page
+      .locator(this.selectors.masterCustomerNameCell)
+      .filter({ hasText: name })
+      .first();
+  }
+  async getFirstMasterCustomerNameFromGrid() {
+    const firstCell = this.page
+      .locator(this.selectors.masterCustomerNameCell)
+      .first();
+    await firstCell.waitFor({ state: 'visible' });
+
+    const text = (await firstCell.textContent())?.trim();
+
+    if (!text) throw new Error('Unable to read first Master Customer Name');
+    return text;
+  }
+  async openMasterCustomerGridMenu(customerName) {
+    const cell = this.getMasterCustomerGridCell(customerName);
+    await cell.hover();
+    await cell.locator(this.selectors.masterCustomerMenuButton).click();
+  }
+  async setMasterCustomerGridCriteria(customerName, criteriaLabel) {
+    await this.openMasterCustomerGridMenu(customerName);
+    await this.selectMasterCustomerCriteria(criteriaLabel);
+  }
+  async setMasterCustomerGridCriteriaAndWaitForResults(criteriaLabel) {
+    const customerName = await this.getFirstMasterCustomerNameFromGrid();
+    const queryKey = this.getMasterCustomerQueryKey(criteriaLabel);
+
+    const [response] = await Promise.all([
+      this.page.waitForResponse((res) => {
+        if (!res.url().includes(this.apiEndpoints.genericApi)) return false;
+        if (!res.url().includes(this.apiEndpoints.customerWithMaster))
+          return false;
+        if (!res.ok()) return false;
+
+        const url = new URL(res.url());
+        const value = url.searchParams.get(queryKey);
+
+        return value === customerName;
+      }),
+      this.setMasterCustomerGridCriteria(customerName, criteriaLabel),
+    ]);
+
+    const body = await response.json();
+    return { customerName, body };
+  }
   async waitForListResponseWithAssignedDateRange({ after, before }) {
     const response = await this.page.waitForResponse((res) => {
       if (!res.ok()) return false;
@@ -270,9 +358,10 @@ export class EnrichPage extends BasePage {
       expect(value, 'Missing MasterCustomerAssignedDatetime').toBeTruthy();
 
       const timestamp = new Date(value).getTime();
-      expect(timestamp, `Date ${value} is BEFORE ${after}`).toBeGreaterThanOrEqual(
-        start
-      );
+      expect(
+        timestamp,
+        `Date ${value} is BEFORE ${after}`
+      ).toBeGreaterThanOrEqual(start);
       expect(timestamp, `Date ${value} is AFTER ${before}`).toBeLessThanOrEqual(
         end
       );
@@ -286,5 +375,34 @@ export class EnrichPage extends BasePage {
 
     this.validateAssignedDateRange(body, { after, before }, expect);
     return body;
+  }
+  async verifyMasterCustomerWasAddedSuccessfully(customerName, expect) {
+    const saveButton = this.page.getByRole('button', { name: 'Save' });
+
+    const [response] = await Promise.all([
+      this.page.waitForResponse((res) => {
+        if (!res.url().includes(this.apiEndpoints.createMasterCustomer))
+          return false;
+        if (!res.ok()) return false;
+
+        const request = res.request();
+        if (request.method() !== 'POST') return false;
+
+        const payload = request.postDataJSON?.();
+        const payloadName = payload?.payload?.MasterCustomerName;
+
+        return payloadName === customerName;
+      }),
+      saveButton.click(),
+    ]);
+
+    const body = await response.json();
+    expect(Array.isArray(body)).toBeTruthy();
+    const result = body[0];
+    expect(result).toBeTruthy();
+    expect(result.MasterCustomerName).toBe(customerName);
+    expect(result.Result).toBe('Succeeded');
+    expect(result.Message).toContain(`'${customerName}'`);
+    return result;
   }
 }

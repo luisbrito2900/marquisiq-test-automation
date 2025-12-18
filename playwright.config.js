@@ -32,10 +32,6 @@ export default defineConfig({
   ],
   use: {
     viewport: { width: 1920, height: 1080 },
-    launchOptions: {
-      args: ['--start-maximized'],
-    },
-    trace: 'on-first-retry',
   },
   projects: [
     {

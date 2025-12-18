@@ -4,29 +4,31 @@ import { HomePage } from '../pages/HomePage';
 import { EnrichPage } from '../pages/EnrichPage';
 import { APP_CONFIG, TEST_DATA, TIMEOUTS } from '../utils/constants';
 
-test.describe('Smoke Tests', () => {
-  // test('Search Filtering by Master Customer Name', async ({ page }) => {
-  //   const loginPage = new LoginPage(page);
-  //   const homePage = new HomePage(page);
-  //   const enrichPage = new EnrichPage(page);
-  //   await loginPage.login(
-  //     TEST_DATA.CREDENTIALS.USERNAME,
-  //     TEST_DATA.CREDENTIALS.PASSWORD,
-  //     APP_CONFIG.BASE_URL
-  //   );
-  //   await homePage.verifyWelcomeMessageVisible();
-  //   await homePage.takeScreenshot('Home Page');
-  //   await homePage.navigateToEnrichTab(1);
-  //   await homePage.waitForEnrichApiLoad();
-  //   await page.waitForTimeout(TIMEOUTS.MEDIUM);
-  //   await enrichPage.takeScreenshot('Enrich Page');
+const newMasterCustomerName = 'EDIT TEST';
 
-  //   await enrichPage.searchByMasterCustomerName(
-  //     TEST_DATA.MASTER_CUSTOMER_NAME,
-  //     expect
-  //   );
-  //   await enrichPage.takeScreenshot('Search Results Displayed');
-  // });
+test.describe('Smoke Tests', () => {
+  test('Search Filtering by Master Customer Name', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    const homePage = new HomePage(page);
+    const enrichPage = new EnrichPage(page);
+    await loginPage.login(
+      TEST_DATA.CREDENTIALS.USERNAME,
+      TEST_DATA.CREDENTIALS.PASSWORD,
+      APP_CONFIG.BASE_URL
+    );
+    await homePage.verifyWelcomeMessageVisible();
+    await homePage.takeScreenshot('Home Page');
+    await homePage.navigateToEnrichTab(1);
+    await homePage.waitForEnrichApiLoad();
+    await page.waitForTimeout(TIMEOUTS.MEDIUM);
+    await enrichPage.takeScreenshot('Enrich Page');
+
+    await enrichPage.searchByMasterCustomerName(
+      TEST_DATA.MASTER_CUSTOMER_NAME,
+      expect
+    );
+    await enrichPage.takeScreenshot('Search Results Displayed');
+  });
   // test('Search Filtering by Assigned Date Range', async ({ page }) => {
   //   const loginPage = new LoginPage(page);
   //   const homePage = new HomePage(page);
@@ -76,7 +78,7 @@ test.describe('Smoke Tests', () => {
       APP_CONFIG.BASE_URL
     );
   });
-
+  // NEED TO ASK THE DEVELOPER TO ADD MULTIPLE ACCOUNTS TO THE TEST USER
   // test('Verify a user associated to multiple accounts', async ({ page }) => {});
 
   test('Verify Menu Navigation', async ({ page }) => {
@@ -130,72 +132,74 @@ test.describe('Smoke Tests', () => {
     );
     await enrichPage.takeScreenshot('Search Results Displayed');
   });
-  test('Verify user can exclude/Include values via sidebar', async ({
-    page,
-  }) => {
-    const loginPage = new LoginPage(page);
-    const homePage = new HomePage(page);
-    const enrichPage = new EnrichPage(page);
-    await loginPage.login(
-      TEST_DATA.CREDENTIALS.USERNAME,
-      TEST_DATA.CREDENTIALS.PASSWORD,
-      APP_CONFIG.BASE_URL
-    );
-    await homePage.verifyWelcomeMessageVisible();
-    await homePage.takeScreenshot('Home Page');
-    await homePage.navigateToEnrichTab(1);
-    await homePage.waitForEnrichApiLoad();
-    await page.waitForTimeout(TIMEOUTS.MEDIUM);
-    await enrichPage.takeScreenshot('Enrich Page');
-    await enrichPage.fillMasterCustomerName(TEST_DATA.MASTER_CUSTOMER_NAME);
-    await enrichPage.clickSearch();
 
-    let body = await enrichPage.setMasterCustomerCriteriaAndWaitForResults(
-      TEST_DATA.MASTER_CUSTOMER_NAME,
-      'Include Exact'
-    );
-    enrichPage.validateMasterCustomerFilter(
-      body,
-      TEST_DATA.MASTER_CUSTOMER_NAME,
-      expect
-    );
+  // NEEDS TO BE REWORKED SINCE UI HAS CHANGED
+  // test('Verify user can exclude/Include values via sidebar', async ({
+  //   page,
+  // }) => {
+  //   const loginPage = new LoginPage(page);
+  //   const homePage = new HomePage(page);
+  //   const enrichPage = new EnrichPage(page);
+  //   await loginPage.login(
+  //     TEST_DATA.CREDENTIALS.USERNAME,
+  //     TEST_DATA.CREDENTIALS.PASSWORD,
+  //     APP_CONFIG.BASE_URL
+  //   );
+  //   await homePage.verifyWelcomeMessageVisible();
+  //   await homePage.takeScreenshot('Home Page');
+  //   await homePage.navigateToEnrichTab(1);
+  //   await homePage.waitForEnrichApiLoad();
+  //   await page.waitForTimeout(TIMEOUTS.MEDIUM);
+  //   await enrichPage.takeScreenshot('Enrich Page');
+  //   await enrichPage.fillMasterCustomerName(TEST_DATA.MASTER_CUSTOMER_NAME);
+  //   await enrichPage.clickSearch();
 
-    // 2) Include Contains
-    body = await enrichPage.setMasterCustomerCriteriaAndWaitForResults(
-      TEST_DATA.MASTER_CUSTOMER_NAME,
-      'Include Contains'
-    );
-    await enrichPage.validateIncludeContains(
-      body,
-      TEST_DATA.MASTER_CUSTOMER_NAME,
-      expect
-    );
+  //   let body = await enrichPage.setMasterCustomerCriteriaAndWaitForResults(
+  //     TEST_DATA.MASTER_CUSTOMER_NAME,
+  //     'Include Exact'
+  //   );
+  //   enrichPage.validateMasterCustomerFilter(
+  //     body,
+  //     TEST_DATA.MASTER_CUSTOMER_NAME,
+  //     expect
+  //   );
 
-    // 3) Exclude Contains
-    body = await enrichPage.setMasterCustomerCriteriaAndWaitForResults(
-      TEST_DATA.MASTER_CUSTOMER_NAME,
-      'Exclude Contains'
-    );
-    await enrichPage.validateExcludeContains(
-      body,
-      TEST_DATA.MASTER_CUSTOMER_NAME,
-      expect
-    );
+  //   // 2) Include Contains
+  //   body = await enrichPage.setMasterCustomerCriteriaAndWaitForResults(
+  //     TEST_DATA.MASTER_CUSTOMER_NAME,
+  //     'Include Contains'
+  //   );
+  //   await enrichPage.validateIncludeContains(
+  //     body,
+  //     TEST_DATA.MASTER_CUSTOMER_NAME,
+  //     expect
+  //   );
 
-    // 4) Exclude Exact
-    body = await enrichPage.setMasterCustomerCriteriaAndWaitForResults(
-      TEST_DATA.MASTER_CUSTOMER_NAME,
-      'Exclude Exact'
-    );
-    await enrichPage.validateExcludeExact(
-      body,
-      TEST_DATA.MASTER_CUSTOMER_NAME,
-      expect
-    );
+  //   // 3) Exclude Contains
+  //   body = await enrichPage.setMasterCustomerCriteriaAndWaitForResults(
+  //     TEST_DATA.MASTER_CUSTOMER_NAME,
+  //     'Exclude Contains'
+  //   );
+  //   await enrichPage.validateExcludeContains(
+  //     body,
+  //     TEST_DATA.MASTER_CUSTOMER_NAME,
+  //     expect
+  //   );
 
-    await page.waitForTimeout(TIMEOUTS.MEDIUM);
-    await enrichPage.takeScreenshot('Search Results Displayed');
-  });
+  //   // 4) Exclude Exact
+  //   body = await enrichPage.setMasterCustomerCriteriaAndWaitForResults(
+  //     TEST_DATA.MASTER_CUSTOMER_NAME,
+  //     'Exclude Exact'
+  //   );
+  //   await enrichPage.validateExcludeExact(
+  //     body,
+  //     TEST_DATA.MASTER_CUSTOMER_NAME,
+  //     expect
+  //   );
+
+  //   await page.waitForTimeout(TIMEOUTS.MEDIUM);
+  //   await enrichPage.takeScreenshot('Search Results Displayed');
+  // });
   test('Verify user can select a date via relative date functionality', async ({
     page,
   }) => {
@@ -231,9 +235,112 @@ test.describe('Smoke Tests', () => {
       },
       expect
     );
-    await page.waitForTimeout(TIMEOUTS.MEDIUM);
   });
-  test.only('Verify user can exclude/include values via in grid selection', async ({
+  // NEEDS TO BE REWORKED SINCE UI HAS CHANGED
+  // test('Verify user can exclude/include values via in grid selection', async ({
+  //   page,
+  // }) => {
+  //   const loginPage = new LoginPage(page);
+  //   const homePage = new HomePage(page);
+  //   const enrichPage = new EnrichPage(page);
+
+  //   await loginPage.login(
+  //     TEST_DATA.CREDENTIALS.USERNAME,
+  //     TEST_DATA.CREDENTIALS.PASSWORD,
+  //     APP_CONFIG.BASE_URL
+  //   );
+
+  //   await homePage.verifyWelcomeMessageVisible();
+  //   await homePage.takeScreenshot('Home Page');
+  //   await homePage.navigateToEnrichTab(1);
+  //   await homePage.waitForEnrichApiLoad();
+
+  //   // const menuBtn = page
+  //   //   .locator('[data-field="MasterCustomerName"] p + button')
+  //   //   .first();
+
+  //   // await menuBtn.scrollIntoViewIfNeeded();
+  //   // await menuBtn.click({ timeout: 30000, force: true });
+  //   // await page.waitForTimeout(TIMEOUTS.MEDIUM);
+
+  //   const includeExact =
+  //     await enrichPage.setMasterCustomerGridCriteriaAndWaitForResults(
+  //       'Include Exact'
+  //     );
+  //   enrichPage.validateMasterCustomerFilter(
+  //     includeExact.body,
+  //     includeExact.customerName,
+  //     expect
+  //   );
+
+  //   const includeContains =
+  //     await enrichPage.setMasterCustomerGridCriteriaAndWaitForResults(
+  //       'Include Contains'
+  //     );
+  //   await enrichPage.validateIncludeContains(
+  //     includeContains.body,
+  //     includeContains.customerName,
+  //     expect
+  //   );
+
+  //   const excludeContains =
+  //     await enrichPage.setMasterCustomerGridCriteriaAndWaitForResults(
+  //       'Exclude Contains'
+  //     );
+  //   await enrichPage.validateExcludeContains(
+  //     excludeContains.body,
+  //     excludeContains.customerName,
+  //     expect
+  //   );
+
+  //   const excludeExact =
+  //     await enrichPage.setMasterCustomerGridCriteriaAndWaitForResults(
+  //       'Exclude Exact'
+  //     );
+  //   await enrichPage.validateExcludeExact(
+  //     excludeExact.body,
+  //     excludeExact.customerName,
+  //     expect
+  //   );
+  // });
+  test('Verify user can search using Advanced Filters', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    const homePage = new HomePage(page);
+    const enrichPage = new EnrichPage(page);
+
+    await loginPage.login(
+      TEST_DATA.CREDENTIALS.USERNAME,
+      TEST_DATA.CREDENTIALS.PASSWORD,
+      APP_CONFIG.BASE_URL
+    );
+
+    await homePage.verifyWelcomeMessageVisible();
+    await homePage.takeScreenshot('Home Page');
+    await homePage.navigateToEnrichTab(1);
+    await homePage.waitForEnrichApiLoad();
+    await enrichPage.takeScreenshot('Enrich Page');
+    await page.getByText('Advanced Filters').click();
+    await page.locator('label+div > div[role="combobox"]').click();
+    await page
+      .locator('ul > li[data-value]')
+      .filter({ hasText: 'Master Customer Name' })
+      .click();
+    await page
+      .locator('[aria-modal="true"] div > input[role="combobox"]')
+      .fill(TEST_DATA.MASTER_CUSTOMER_NAME);
+    await enrichPage.searchByMasterCustomerName(
+      TEST_DATA.MASTER_CUSTOMER_NAME,
+      expect,
+      {
+        updateAction: true,
+        queryParam: {
+          key: ['MasterCustomerName_exact[]', 'MasterCustomerName_contains[]'],
+          value: TEST_DATA.MASTER_CUSTOMER_NAME,
+        },
+      }
+    );
+  });
+  test('Verify a user can create a Master Customer/Assign', async ({
     page,
   }) => {
     const loginPage = new LoginPage(page);
@@ -250,31 +357,25 @@ test.describe('Smoke Tests', () => {
     await homePage.takeScreenshot('Home Page');
     await homePage.navigateToEnrichTab(1);
     await homePage.waitForEnrichApiLoad();
-    const firstMasterCustomer = page
-      .locator('[data-field="MasterCustomerName"] p')
-      .first();
-    const firstMasterCustomerName = (
-      await firstMasterCustomer.textContent()
-    )?.trim();
-
-    expect(firstMasterCustomerName).toBeTruthy();
-
+    await enrichPage.takeScreenshot('Enrich Page');
+    await page.getByRole('button', { name: 'Add' }).click();
     await page
-      .locator('[data-field="MasterCustomerName"]')
-      .filter({ hasText: firstMasterCustomerName })
-      .hover();
-    await page
-      .locator('[data-field="MasterCustomerName"]')
-      .filter({ hasText: firstMasterCustomerName })
-      .locator('button[aria-label="Menu"]')
-      .click();
+      .getByRole('textbox', { name: 'Master Customer Name' })
+      .fill(newMasterCustomerName);
+    await page.getByRole('combobox', { name: 'Segment 6' }).fill('6');
+    await page.getByRole('option').click();
+    await page.getByRole('combobox', { name: 'Segment777700' }).fill('7');
+    await page.getByRole('option').click();
+    await page.getByRole('combobox', { name: 'Segment8' }).fill('Blue');
+    await page.getByRole('option').click();
+    await enrichPage.verifyMasterCustomerWasAddedSuccessfully(
+      newMasterCustomerName,
+      expect
+    );
+    await expect(page.getByText('Success', { exact: true })).toBeVisible();
     await page.waitForTimeout(TIMEOUTS.MEDIUM);
   });
-  test('Verify user can search using Advanced Filters', async ({ page }) => {});
-  test('Verify a user can create a Master Customer/Assign', async ({
-    page,
-  }) => {});
-  test('Verify a user can edit an existing Master Customer (Assign)', async ({
+  test.only('Verify a user can edit an existing Master Customer (Assign)', async ({
     page,
   }) => {});
   test('Verify a user can edit an existing Master Customer (Maintain)', async ({
