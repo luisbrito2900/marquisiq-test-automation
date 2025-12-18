@@ -130,26 +130,26 @@ export class EnrichPage extends BasePage {
     return body;
   }
 
-  validateAssignedDateRange(responseBody, startYear, endYear, expect) {
-    expect(Array.isArray(responseBody.results)).toBe(true);
+  // validateAssignedDateRange(responseBody, startYear, endYear, expect) {
+  //   expect(Array.isArray(responseBody.results)).toBe(true);
 
-    const startDate = new Date(`${startYear}-01-01T00:00:00`);
-    const endDate = new Date(`${endYear}-12-31T23:59:59`);
+  //   const startDate = new Date(`${startYear}-01-01T00:00:00`);
+  //   const endDate = new Date(`${endYear}-12-31T23:59:59`);
 
-    const rowsWithDate = responseBody.results.filter(
-      (item) => item.MasterCustomerAssignedDatetime
-    );
+  //   const rowsWithDate = responseBody.results.filter(
+  //     (item) => item.MasterCustomerAssignedDatetime
+  //   );
 
-    expect(rowsWithDate.length).toBeGreaterThan(0);
+  //   expect(rowsWithDate.length).toBeGreaterThan(0);
 
-    for (const item of rowsWithDate) {
-      const value = item.MasterCustomerAssignedDatetime;
-      const date = new Date(value);
+  //   for (const item of rowsWithDate) {
+  //     const value = item.MasterCustomerAssignedDatetime;
+  //     const date = new Date(value);
 
-      expect(date.getTime()).toBeGreaterThanOrEqual(startDate.getTime());
-      expect(date.getTime()).toBeLessThanOrEqual(endDate.getTime());
-    }
-  }
+  //     expect(date.getTime()).toBeGreaterThanOrEqual(startDate.getTime());
+  //     expect(date.getTime()).toBeLessThanOrEqual(endDate.getTime());
+  //   }
+  // }
 
   async filterByAssignedDateRange(startYear, endYear, expect) {
     const responseBody = await this.applyDateRangeAndWaitForResults();
@@ -238,5 +238,53 @@ export class EnrichPage extends BasePage {
     for (const item of responseBody.results) {
       await expect(item.MasterCustomerName).not.toBe(excludedName);
     }
+  }
+  async waitForListResponseWithAssignedDateRange({ after, before }) {
+    const response = await this.page.waitForResponse((res) => {
+      if (!res.ok()) return false;
+      if (!res.url().includes(this.apiEndpoints.genericApi)) return false;
+      if (!res.url().includes(this.apiEndpoints.customerWithMaster))
+        return false;
+
+      const url = new URL(res.url());
+      const hasAfter =
+        url.searchParams.get('MasterCustomerAssignedDatetime_after') === after;
+      const hasBefore =
+        url.searchParams.get('MasterCustomerAssignedDatetime_before') ===
+        before;
+
+      return hasAfter && hasBefore;
+    });
+
+    return response.json();
+  }
+
+  validateAssignedDateRange(body, { after, before }, expect) {
+    expect(Array.isArray(body.results)).toBeTruthy();
+
+    const start = new Date(after).getTime();
+    const end = new Date(before).getTime();
+
+    for (const item of body.results) {
+      const value = item.MasterCustomerAssignedDatetime;
+      expect(value, 'Missing MasterCustomerAssignedDatetime').toBeTruthy();
+
+      const timestamp = new Date(value).getTime();
+      expect(timestamp, `Date ${value} is BEFORE ${after}`).toBeGreaterThanOrEqual(
+        start
+      );
+      expect(timestamp, `Date ${value} is AFTER ${before}`).toBeLessThanOrEqual(
+        end
+      );
+    }
+  }
+  async applyAssignedDateRangeAndValidate({ after, before }, expect) {
+    const [body] = await Promise.all([
+      this.waitForListResponseWithAssignedDateRange({ after, before }),
+      this.clickOnApplyBtn(),
+    ]);
+
+    this.validateAssignedDateRange(body, { after, before }, expect);
+    return body;
   }
 }

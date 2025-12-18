@@ -88,6 +88,8 @@ test.describe('Smoke Tests', () => {
       TEST_DATA.CREDENTIALS.PASSWORD,
       APP_CONFIG.BASE_URL
     );
+
+    // add multiple accounts to my accounts
     await homePage.navigateToEnrichTab();
     await homePage.clickOnExploreTab();
     await homePage.clickOnAnalyzeTab(); // CHECK LATER
@@ -194,14 +196,12 @@ test.describe('Smoke Tests', () => {
     await page.waitForTimeout(TIMEOUTS.MEDIUM);
     await enrichPage.takeScreenshot('Search Results Displayed');
   });
-  test.only('Verify user can select a date via relative date functionality', async ({
+  test('Verify user can select a date via relative date functionality', async ({
     page,
   }) => {
     const loginPage = new LoginPage(page);
     const homePage = new HomePage(page);
     const enrichPage = new EnrichPage(page);
-    // const startYear = '2022';
-    // const nextYear = '2025';
 
     await loginPage.login(
       TEST_DATA.CREDENTIALS.USERNAME,
@@ -211,15 +211,11 @@ test.describe('Smoke Tests', () => {
 
     await homePage.verifyWelcomeMessageVisible();
     await homePage.takeScreenshot('Home Page');
-
     await homePage.navigateToEnrichTab(1);
     await homePage.waitForEnrichApiLoad();
-    await page.waitForTimeout(TIMEOUTS.MEDIUM);
     await enrichPage.takeScreenshot('Enrich Page');
-
     await enrichPage.clickOnDateRangeButton();
     await enrichPage.takeScreenshot('Date Range Button Clicked');
-
     await page.getByRole('textbox', { name: 'Start' }).click();
     await page
       .locator(
@@ -228,28 +224,52 @@ test.describe('Smoke Tests', () => {
       .click();
     await page.locator('button').filter({ hasText: '20' }).first().click();
     await page.locator('button').filter({ hasText: '20' }).last().click();
-    await enrichPage.clickOnApplyBtn();
+    await enrichPage.applyAssignedDateRangeAndValidate(
+      {
+        after: '2025-11-20',
+        before: '2025-12-20',
+      },
+      expect
+    );
     await page.waitForTimeout(TIMEOUTS.MEDIUM);
-
-    // await enrichPage.selectDateRange('Years');
-
-    // await enrichPage.clickOnLastCheckbox();
-    // await enrichPage.clickOnNextCheckbox();
-    // await enrichPage.takeScreenshot('Last and Next Checkboxes Clicked');
-
-    // await enrichPage.fillLastField(startYear);
-    // await enrichPage.fillNextField(nextYear);
-    // await enrichPage.takeScreenshot('Last and Next Fields Filled');
-
-    // await enrichPage.filterByAssignedDateRange(startYear, nextYear, expect);
-
-    // await page.waitForTimeout(TIMEOUTS.MEDIUM);
-
-    // await enrichPage.takeScreenshot('Date Range Applied');
   });
-  test('Verify user can exclude/include values via in grid selection', async ({
+  test.only('Verify user can exclude/include values via in grid selection', async ({
     page,
-  }) => {});
+  }) => {
+    const loginPage = new LoginPage(page);
+    const homePage = new HomePage(page);
+    const enrichPage = new EnrichPage(page);
+
+    await loginPage.login(
+      TEST_DATA.CREDENTIALS.USERNAME,
+      TEST_DATA.CREDENTIALS.PASSWORD,
+      APP_CONFIG.BASE_URL
+    );
+
+    await homePage.verifyWelcomeMessageVisible();
+    await homePage.takeScreenshot('Home Page');
+    await homePage.navigateToEnrichTab(1);
+    await homePage.waitForEnrichApiLoad();
+    const firstMasterCustomer = page
+      .locator('[data-field="MasterCustomerName"] p')
+      .first();
+    const firstMasterCustomerName = (
+      await firstMasterCustomer.textContent()
+    )?.trim();
+
+    expect(firstMasterCustomerName).toBeTruthy();
+
+    await page
+      .locator('[data-field="MasterCustomerName"]')
+      .filter({ hasText: firstMasterCustomerName })
+      .hover();
+    await page
+      .locator('[data-field="MasterCustomerName"]')
+      .filter({ hasText: firstMasterCustomerName })
+      .locator('button[aria-label="Menu"]')
+      .click();
+    await page.waitForTimeout(TIMEOUTS.MEDIUM);
+  });
   test('Verify user can search using Advanced Filters', async ({ page }) => {});
   test('Verify a user can create a Master Customer/Assign', async ({
     page,
