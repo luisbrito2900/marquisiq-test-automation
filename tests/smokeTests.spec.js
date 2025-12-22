@@ -79,7 +79,9 @@ test.describe('Smoke Tests', () => {
     );
   });
   // WORK ON IT
-  test.skip('Verify a user associated to multiple accounts', async ({ page }) => {
+  test.skip('Verify a user associated to multiple accounts', async ({
+    page,
+  }) => {
     const loginPage = new LoginPage(page);
 
     await loginPage.login(
@@ -111,7 +113,9 @@ test.describe('Smoke Tests', () => {
     await homePage.navigateToEnrichTab();
     await enrichPage.selectOption();
   });
-  test.skip('Verify a user can search functionality (sidebar)', async ({ page }) => {
+  test.skip('Verify a user can search functionality (sidebar)', async ({
+    page,
+  }) => {
     const loginPage = new LoginPage(page);
     const homePage = new HomePage(page);
     const enrichPage = new EnrichPage(page);
@@ -304,7 +308,9 @@ test.describe('Smoke Tests', () => {
     //   expect
     // );
   });
-  test.skip('Verify user can search using Advanced Filters', async ({ page }) => {
+  test.skip('Verify user can search using Advanced Filters', async ({
+    page,
+  }) => {
     const loginPage = new LoginPage(page);
     const homePage = new HomePage(page);
     const enrichPage = new EnrichPage(page);
@@ -347,12 +353,16 @@ test.describe('Smoke Tests', () => {
     const loginPage = new LoginPage(page);
     const homePage = new HomePage(page);
     const enrichPage = new EnrichPage(page);
+    const randomCustomerName = `E2E-${Date.now().toString().slice(-6)}`;
 
     await loginPage.login(
       TEST_DATA.CREDENTIALS.USERNAME,
       TEST_DATA.CREDENTIALS.PASSWORD,
       APP_CONFIG.BASE_URL
     );
+    await page.getByRole('button', { name: 'TA' }).click();
+    await page.locator('button').filter({ hasText: 'Switch' }).first().click();
+    await page.getByRole('tab', { name: 'Home' }).click();
 
     await homePage.verifyWelcomeMessageVisible();
     await homePage.takeScreenshot('Home Page');
@@ -360,9 +370,10 @@ test.describe('Smoke Tests', () => {
     await homePage.waitForEnrichApiLoad();
     await enrichPage.takeScreenshot('Enrich Page');
     await page.getByRole('button', { name: 'Add' }).click();
+    // await page.waitForTimeout(TIMEOUTS.MEDIUM);
     await page
       .getByRole('textbox', { name: 'Master Customer Name' })
-      .fill(newMasterCustomerName);
+      .fill(randomCustomerName);
     await page.getByRole('combobox', { name: 'Segment 6' }).fill('6');
     await page.getByRole('option').click();
     await page.getByRole('combobox', { name: 'Segment777700' }).fill('7');
@@ -370,10 +381,11 @@ test.describe('Smoke Tests', () => {
     await page.getByRole('combobox', { name: 'Segment8' }).fill('Blue');
     await page.getByRole('option').click();
     await enrichPage.verifyMasterCustomerWasAddedSuccessfully(
-      newMasterCustomerName,
+      randomCustomerName,
       expect
     );
     await expect(page.getByText('Success', { exact: true })).toBeVisible();
+    await page.waitForTimeout(TIMEOUTS.MEDIUM);
   });
   test.skip('Verify a user can edit an existing Master Customer (Assign)', async ({
     page,
