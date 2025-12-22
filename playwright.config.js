@@ -22,12 +22,6 @@ export default defineConfig({
         outputFolder: 'allure-results',
         detail: true,
         suiteTitle: true,
-        categories: [
-          {
-            name: 'Smoke Tests',
-            matchedStatuses: ['failed', 'broken'],
-          },
-        ],
         environmentInfo: {
           framework: 'Playwright',
           node_version: process.version,
@@ -37,6 +31,9 @@ export default defineConfig({
   ],
   use: {
     viewport: { width: 1920, height: 1080 },
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
+    trace: 'retain-on-failure',
   },
   projects: [
     {
