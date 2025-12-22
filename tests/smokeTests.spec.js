@@ -4,8 +4,6 @@ import { HomePage } from '../pages/HomePage';
 import { EnrichPage } from '../pages/EnrichPage';
 import { APP_CONFIG, TEST_DATA, TIMEOUTS } from '../utils/constants';
 
-const newMasterCustomerName = 'EDIT TEST';
-
 test.describe('Smoke Tests', () => {
   // test('Search Filtering by Master Customer Name', async ({ page }) => {
   //   const loginPage = new LoginPage(page);
