@@ -24,6 +24,8 @@ export default [
       'node_modules/**',
       'test-results/**',
       'playwright-report/**',
+      'allure-report/**',
+      'allure-results/**',
       'mochawesome-report/**',
       'playwright/.cache/**',
       'playwright/.auth/**',
