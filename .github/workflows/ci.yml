@@ -57,6 +57,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Check Allure Results
+        if: always()
+        run: |
+          echo "Checking allure-results directory..."
+          ls -la allure-results/ || echo "allure-results directory not found"
+          echo "Number of result files:"
+          find allure-results -name "*-result.json" | wc -l || echo "0"
+
       - name: Generate Allure Report
         if: always()
         run: npm run allure:generate
