@@ -366,6 +366,7 @@ test.describe('Smoke Tests', () => {
     await homePage.takeScreenshot('Home Page');
     await homePage.navigateToEnrichTab(1);
     await homePage.waitForEnrichApiLoad();
+    await page.waitForTimeout(TIMEOUTS.SHORT);
     await enrichPage.takeScreenshot('Enrich Page');
     await page.getByRole('button', { name: 'Add' }).click();
     // await page.waitForTimeout(TIMEOUTS.MEDIUM);
@@ -377,13 +378,16 @@ test.describe('Smoke Tests', () => {
     await page.getByRole('combobox', { name: 'Segment777700' }).fill('7');
     await page.getByRole('option').click();
     await page.getByRole('combobox', { name: 'Segment8' }).fill('Blue');
+    await page.waitForTimeout(TIMEOUTS.SHORT);
+    await enrichPage.takeScreenshot('Master Customer Details Filled');
     await page.getByRole('option').click();
     await enrichPage.verifyMasterCustomerWasAddedSuccessfully(
       randomCustomerName,
       expect
     );
     await expect(page.getByText('Success', { exact: true })).toBeVisible();
-    await page.waitForTimeout(TIMEOUTS.MEDIUM);
+    await page.waitForTimeout(TIMEOUTS.SHORT);
+    await homePage.takeScreenshot('Master Customer Created');
   });
   test.skip('Verify a user can edit an existing Master Customer (Assign)', async ({
     page,
