@@ -28,6 +28,10 @@ export class EnrichPage extends BasePage {
       customerWithMaster: 'vwCustomerWithMaster',
       createMasterCustomer: '/generic/api/generic/assign',
     };
+
+    this.segmentOptions = {
+      Segment8: ['Blue', 'Internal', "Paul's Region", 'Yellow'],
+    };
   }
 
   getMasterCustomerNameComboBox() {
@@ -376,7 +380,7 @@ export class EnrichPage extends BasePage {
     this.validateAssignedDateRange(body, { after, before }, expect);
     return body;
   }
-  async verifyMasterCustomerWasAddedSuccessfully(customerName, expect) {
+  async waitForMasterCustomerSave(customerName, expect) {
     const saveButton = this.page.getByRole('button', { name: 'Save' });
 
     const [response] = await Promise.all([
@@ -404,5 +408,31 @@ export class EnrichPage extends BasePage {
     expect(result.Result).toBe('Succeeded');
     expect(result.Message).toContain(`'${customerName}'`);
     return result;
+  }
+
+  async verifyMasterCustomerWasAddedSuccessfully(customerName, expect) {
+    return this.waitForMasterCustomerSave(customerName, expect);
+  }
+
+  async verifyMasterCustomerWasEditedSuccessfully(customerName, expect) {
+    return this.waitForMasterCustomerSave(customerName, expect);
+  }
+
+  async selectDifferentSegmentValue(fieldLabel) {
+    const options = this.segmentOptions[fieldLabel];
+    if (!options) throw new Error(`Unknown segment field: ${fieldLabel}`);
+
+    const combo = this.page.getByRole('combobox', { name: fieldLabel });
+    const currentValue = (await combo.inputValue())?.trim();
+
+    const newValue = options.find((option) => option !== currentValue);
+    if (!newValue) throw new Error(`No alternative option for ${fieldLabel}`);
+
+    await combo.click();
+    await combo.fill('');
+    await combo.fill(newValue);
+    await this.page.getByRole('option', { name: newValue, exact: true }).click();
+
+    return { previousValue: currentValue, newValue };
   }
 }

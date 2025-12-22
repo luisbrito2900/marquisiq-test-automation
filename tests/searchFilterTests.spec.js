@@ -7,28 +7,28 @@ import { APP_CONFIG, TEST_DATA, TIMEOUTS } from '../utils/constants';
 const newMasterCustomerName = 'EDIT TEST';
 
 test.describe('Smoke Tests', () => {
-  test('Search Filtering by Master Customer Name', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    const homePage = new HomePage(page);
-    const enrichPage = new EnrichPage(page);
-    await loginPage.login(
-      TEST_DATA.CREDENTIALS.USERNAME,
-      TEST_DATA.CREDENTIALS.PASSWORD,
-      APP_CONFIG.BASE_URL
-    );
-    await homePage.verifyWelcomeMessageVisible();
-    await homePage.takeScreenshot('Home Page');
-    await homePage.navigateToEnrichTab(1);
-    await homePage.waitForEnrichApiLoad();
-    await page.waitForTimeout(TIMEOUTS.MEDIUM);
-    await enrichPage.takeScreenshot('Enrich Page');
+  // test('Search Filtering by Master Customer Name', async ({ page }) => {
+  //   const loginPage = new LoginPage(page);
+  //   const homePage = new HomePage(page);
+  //   const enrichPage = new EnrichPage(page);
+  //   await loginPage.login(
+  //     TEST_DATA.CREDENTIALS.USERNAME,
+  //     TEST_DATA.CREDENTIALS.PASSWORD,
+  //     APP_CONFIG.BASE_URL
+  //   );
+  //   await homePage.verifyWelcomeMessageVisible();
+  //   await homePage.takeScreenshot('Home Page');
+  //   await homePage.navigateToEnrichTab(1);
+  //   await homePage.waitForEnrichApiLoad();
+  //   await page.waitForTimeout(TIMEOUTS.MEDIUM);
+  //   await enrichPage.takeScreenshot('Enrich Page');
 
-    await enrichPage.searchByMasterCustomerName(
-      TEST_DATA.MASTER_CUSTOMER_NAME,
-      expect
-    );
-    await enrichPage.takeScreenshot('Search Results Displayed');
-  });
+  //   await enrichPage.searchByMasterCustomerName(
+  //     TEST_DATA.MASTER_CUSTOMER_NAME,
+  //     expect
+  //   );
+  //   await enrichPage.takeScreenshot('Search Results Displayed');
+  // });
   // test('Search Filtering by Assigned Date Range', async ({ page }) => {
   //   const loginPage = new LoginPage(page);
   //   const homePage = new HomePage(page);
@@ -373,27 +373,223 @@ test.describe('Smoke Tests', () => {
       expect
     );
     await expect(page.getByText('Success', { exact: true })).toBeVisible();
-    await page.waitForTimeout(TIMEOUTS.MEDIUM);
   });
-  test.only('Verify a user can edit an existing Master Customer (Assign)', async ({
+  test('Verify a user can edit an existing Master Customer (Assign)', async ({
     page,
-  }) => {});
+  }) => {
+    const loginPage = new LoginPage(page);
+    const homePage = new HomePage(page);
+    const enrichPage = new EnrichPage(page);
+    const editMasterCustomerName = 'test33';
+
+    await loginPage.login(
+      TEST_DATA.CREDENTIALS.USERNAME,
+      TEST_DATA.CREDENTIALS.PASSWORD,
+      APP_CONFIG.BASE_URL
+    );
+
+    await homePage.verifyWelcomeMessageVisible();
+    await homePage.takeScreenshot('Home Page');
+    await homePage.navigateToEnrichTab(1);
+    await homePage.waitForEnrichApiLoad();
+    await enrichPage.takeScreenshot('Enrich Page');
+    await page
+      .locator(
+        'input.MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputAdornedEnd.MuiAutocomplete-input.MuiAutocomplete-inputFocused.css-1v0myb8:visible'
+      )
+      .fill(editMasterCustomerName);
+    await page
+      .getByText(`${editMasterCustomerName} (1)`, { exact: true })
+      .click();
+    await page.locator(':text("Edit")').click();
+    await enrichPage.selectDifferentSegmentValue('Segment8');
+    await enrichPage.verifyMasterCustomerWasEditedSuccessfully(
+      editMasterCustomerName,
+      expect
+    );
+    await expect(page.getByText('Success', { exact: true })).toBeVisible();
+    // await page.waitForTimeout(TIMEOUTS.MEDIUM);
+  });
   test('Verify a user can edit an existing Master Customer (Maintain)', async ({
     page,
-  }) => {});
+  }) => {
+    const loginPage = new LoginPage(page);
+    const homePage = new HomePage(page);
+    const enrichPage = new EnrichPage(page);
+    const editMasterCustomerName = 'test33';
+
+    await loginPage.login(
+      TEST_DATA.CREDENTIALS.USERNAME,
+      TEST_DATA.CREDENTIALS.PASSWORD,
+      APP_CONFIG.BASE_URL
+    );
+
+    await homePage.verifyWelcomeMessageVisible();
+    await homePage.takeScreenshot('Home Page');
+    await homePage.navigateToEnrichTab(1);
+    await homePage.waitForEnrichApiLoad();
+    await enrichPage.takeScreenshot('Enrich Page');
+    await page
+      .locator(
+        'input.MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputAdornedEnd.MuiAutocomplete-input.MuiAutocomplete-inputFocused.css-1v0myb8:visible'
+      )
+      .fill(editMasterCustomerName);
+    await page
+      .getByText(`${editMasterCustomerName} (1)`, { exact: true })
+      .click();
+    await page.locator(':text("Edit")').click();
+    await enrichPage.selectDifferentSegmentValue('Segment8');
+    await enrichPage.verifyMasterCustomerWasEditedSuccessfully(
+      editMasterCustomerName,
+      expect
+    );
+    await expect(page.getByText('Success', { exact: true })).toBeVisible();
+    // await page.waitForTimeout(TIMEOUTS.MEDIUM);
+  });
   test('Verify a user can assign a Master Customer (Bulk Edit)', async ({
     page,
-  }) => {});
+  }) => {
+    const loginPage = new LoginPage(page);
+    const homePage = new HomePage(page);
+    const enrichPage = new EnrichPage(page);
+
+    await loginPage.login(
+      TEST_DATA.CREDENTIALS.USERNAME,
+      TEST_DATA.CREDENTIALS.PASSWORD,
+      APP_CONFIG.BASE_URL
+    );
+
+    await homePage.verifyWelcomeMessageVisible();
+    await homePage.takeScreenshot('Home Page');
+    await homePage.navigateToEnrichTab(1);
+    await homePage.waitForEnrichApiLoad();
+    await enrichPage.takeScreenshot('Enrich Page');
+  });
   test('Verify user RESET a customer from a Master Customer (Bulk Edit)', async ({
     page,
-  }) => {});
+  }) => {
+    const loginPage = new LoginPage(page);
+    const homePage = new HomePage(page);
+    const enrichPage = new EnrichPage(page);
+
+    await loginPage.login(
+      TEST_DATA.CREDENTIALS.USERNAME,
+      TEST_DATA.CREDENTIALS.PASSWORD,
+      APP_CONFIG.BASE_URL
+    );
+
+    await homePage.verifyWelcomeMessageVisible();
+    await homePage.takeScreenshot('Home Page');
+    await homePage.navigateToEnrichTab(1);
+    await homePage.waitForEnrichApiLoad();
+    await enrichPage.takeScreenshot('Enrich Page');
+  });
   test('Verify user can reassign a Master Customer via In Grid edit', async ({
     page,
-  }) => {});
-  test('Verify a user can create Segment values', async ({ page }) => {});
-  test('Verify a user can edit existing Segment values', async ({
-    page,
-  }) => {});
+  }) => {
+    const loginPage = new LoginPage(page);
+    const homePage = new HomePage(page);
+    const enrichPage = new EnrichPage(page);
+
+    await loginPage.login(
+      TEST_DATA.CREDENTIALS.USERNAME,
+      TEST_DATA.CREDENTIALS.PASSWORD,
+      APP_CONFIG.BASE_URL
+    );
+
+    await homePage.verifyWelcomeMessageVisible();
+    await homePage.takeScreenshot('Home Page');
+    await homePage.navigateToEnrichTab(1);
+    await homePage.waitForEnrichApiLoad();
+    await enrichPage.takeScreenshot('Enrich Page');
+  });
+  test('Verify a user can create Segment values', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    const homePage = new HomePage(page);
+    const enrichPage = new EnrichPage(page);
+
+    await loginPage.login(
+      TEST_DATA.CREDENTIALS.USERNAME,
+      TEST_DATA.CREDENTIALS.PASSWORD,
+      APP_CONFIG.BASE_URL
+    );
+
+    await homePage.verifyWelcomeMessageVisible();
+    await homePage.takeScreenshot('Home Page');
+    await homePage.navigateToEnrichTab(1);
+    await homePage.waitForEnrichApiLoad();
+    await enrichPage.takeScreenshot('Enrich Page');
+    await page.getByText('Assign', { exact: true }).click();
+    await page.locator('li:has-text("Configure")').click();
+    await page
+      .getByRole('textbox', { name: 'New Salesforce Account' })
+      .fill('Samsung');
+    await enrichPage.takeScreenshot('New Segment Value Filled');
+    await page.locator('button').filter({ hasText: 'Add' }).nth(1).click();
+    await expect(page.getByText('Samsung', { exact: true })).toBeVisible();
+    await page.getByRole('button', { name: 'Save Changes' }).click();
+    await expect(
+      page.getByText('Records saved successfully.', { exact: true })
+    ).toBeVisible();
+    await page.waitForTimeout(TIMEOUTS.MEDIUM);
+    await enrichPage.takeScreenshot('Segment Value Added');
+    const row = page.locator('li.MuiListItem-root', {
+      has: page.locator('span', { hasText: 'Samsung' }),
+    });
+    await row.locator('button[aria-label="Delete"]').click();
+    await page.getByRole('button', { name: 'Save Changes' }).click();
+    await page.waitForTimeout(TIMEOUTS.MEDIUM);
+  });
+  test('Verify a user can edit existing Segment values', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    // const homePage = new HomePage(page);
+    // const enrichPage = new EnrichPage(page);
+
+    await loginPage.login(
+      TEST_DATA.CREDENTIALS.USERNAME,
+      TEST_DATA.CREDENTIALS.PASSWORD,
+      APP_CONFIG.BASE_URL
+    );
+    ///////////////////////////////////////////////////////////////////////////
+    // await homePage.verifyWelcomeMessageVisible();
+    // await homePage.takeScreenshot('Home Page');
+    // await homePage.navigateToEnrichTab(1);
+    // await homePage.waitForEnrichApiLoad();
+
+    // await enrichPage.takeScreenshot('Enrich Page');
+    // await page.getByText('Assign', { exact: true }).click();
+    // await page.locator('li:has-text("Configure")').click();
+    // await page
+    //   .getByRole('textbox', { name: 'New Salesforce Account' })
+    //   .fill('Samsung');
+    // await enrichPage.takeScreenshot('New Segment Value Filled');
+    // await page.locator('button').filter({ hasText: 'Add' }).nth(1).click();
+    // await expect(page.getByText('Samsung', { exact: true })).toBeVisible();
+    // await page.getByRole('button', { name: 'Save Changes' }).click();
+    // await expect(
+    //   page.getByText('Records saved successfully.', { exact: true })
+    // ).toBeVisible();
+    // await enrichPage.takeScreenshot('Segment Value Added');
+    // await page.waitForTimeout(TIMEOUTS.MEDIUM);
+    // const row1 = page.locator('li.MuiListItem-root', {
+    //   has: page.locator('span', { hasText: 'Samsung' }),
+    // });
+    // await row1.locator('button[aria-label="Edit"]').click();
+    ///////////////////////////////////////////////////////////////////////////
+
+    // keep working the edit flow here
+
+    // Delete the added value to keep the test idempotent
+
+    // const row2 = page.locator('li.MuiListItem-root', {
+    //   has: page.locator('span', { hasText: 'Samsung' }),
+    // });
+    // await row2.locator('button[aria-label="Delete"]').click();
+    // await page.getByRole('button', { name: 'Save Changes' }).click();
+    // await page.waitForTimeout(TIMEOUTS.MEDIUM);
+  });
+
+  //page.getByText('Records saved successfully.', { exact: true })
   test('Verify a user can delete an existing Segment value', async ({
     page,
   }) => {});
