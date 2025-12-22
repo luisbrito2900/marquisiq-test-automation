@@ -47,6 +47,7 @@ jobs:
           BASE_URL: ${{ secrets.BASE_URL }}
           USERNAME: ${{ secrets.USERNAME }}
           PASSWORD: ${{ secrets.PASSWORD }}
+          DOTENV_CONFIG_TIPS: false
         run: npm test
 
       - name: Setup Java
