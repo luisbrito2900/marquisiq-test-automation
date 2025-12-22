@@ -7,8 +7,9 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 
-# Mochawesome Reports
-/mochawesome-report/
+# Allure Reports
+/allure-results/
+/allure-report/
 
 # Environment variables
 .env

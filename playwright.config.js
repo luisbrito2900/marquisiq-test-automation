@@ -17,16 +17,21 @@ export default defineConfig({
   reporter: [
     ['html', { outputFolder: 'playwright-report' }],
     [
-      'pwmochawesome',
+      'allure-playwright',
       {
-        outputJSON: true,
-        outputFileName: 'mochawesome.json',
-        generateHTML: true,
-        reportDir: 'mochawesome-report',
-        reportTitle: 'MarquisIQ Test Report',
-        charts: true,
-        inlineAssets: true,
-        code: true,
+        outputFolder: 'allure-results',
+        detail: true,
+        suiteTitle: true,
+        categories: [
+          {
+            name: 'Smoke Tests',
+            matchedStatuses: ['failed', 'broken'],
+          },
+        ],
+        environmentInfo: {
+          framework: 'Playwright',
+          node_version: process.version,
+        },
       },
     ],
   ],
