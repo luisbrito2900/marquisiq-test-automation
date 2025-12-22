@@ -590,20 +590,20 @@ test.describe('Smoke Tests', () => {
   });
 
   //page.getByText('Records saved successfully.', { exact: true })
-  test('Verify a user can delete an existing Segment value', async ({
-    page,
-  }) => {});
-  test('Verify a user can update a Family Name', async ({ page }) => {});
-  test('Verify a user can revert Family name value to automatic value', async ({
-    page,
-  }) => {});
-  test('Verify a user can make in grid edits', async ({ page }) => {});
-  test('Verify a user can make bulk edits', async ({ page }) => {});
-  test('Verify a user can hide/add Segments', async ({ page }) => {});
-  test('Verify user can manage columns', async ({ page }) => {});
-  test('Verify user can view Tableau dashboard via ANALYZE menu', async ({
-    page,
-  }) => {});
-  test('Verify user can download files', async ({ page }) => {});
-  test('Verify user can upload a new file', async ({ page }) => {});
+  // test('Verify a user can delete an existing Segment value', async ({
+  //   page,
+  // }) => {});
+  // test('Verify a user can update a Family Name', async ({ page }) => {});
+  // test('Verify a user can revert Family name value to automatic value', async ({
+  //   page,
+  // }) => {});
+  // test('Verify a user can make in grid edits', async ({ page }) => {});
+  // test('Verify a user can make bulk edits', async ({ page }) => {});
+  // test('Verify a user can hide/add Segments', async ({ page }) => {});
+  // test('Verify user can manage columns', async ({ page }) => {});
+  // test('Verify user can view Tableau dashboard via ANALYZE menu', async ({
+  //   page,
+  // }) => {});
+  // test('Verify user can download files', async ({ page }) => {});
+  // test('Verify user can upload a new file', async ({ page }) => {});
 });
