@@ -1,4 +1,6 @@
 import { BasePage } from './BasePage';
+import { HomePage } from './HomePage';
+
 export class LoginPage extends BasePage {
   constructor(page) {
     super(page);
@@ -45,8 +47,10 @@ export class LoginPage extends BasePage {
     await this.clickSignIn();
 
     await this.fillUsername(username);
+    await this.takeScreenshot('Username Filled');
     await this.clickSubmit();
     await this.fillPassword(password);
+    await this.takeScreenshot('Password Filled');
     await this.clickSubmit();
 
     const el = this.page.locator('#cancelLink');
@@ -71,5 +75,17 @@ export class LoginPage extends BasePage {
     await this.clickBack();
 
     await this.page.waitForTimeout(5000);
+
+    await this.page.getByRole('button', { name: 'TA' }).click();
+    await this.page
+      .locator('button')
+      .filter({ hasText: 'Switch' })
+      .first()
+      .click();
+    await this.page.getByRole('tab', { name: 'Home' }).click();
+
+    const homePage = new HomePage(this.page);
+    await homePage.verifyWelcomeMessageVisible();
+    await this.takeScreenshot('Login Successful');
   }
 }

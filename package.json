@@ -5,13 +5,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:testRunner": "playwright test --test-runner",
-    "allure:generate": "allure generate allure-results --clean -o allure-report",
-    "allure:open": "allure open allure-report",
-    "allure:serve": "allure serve allure-results",
-    "test:allure": "npm run test && npm run allure:generate && npm run allure:open",
+    "test": "node utils/cleanReports.js && playwright test",
+    "test:headed": "node utils/cleanReports.js && playwright test --headed",
+    "report": "allure serve allure-results",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:check": "eslint . --max-warnings=0"
